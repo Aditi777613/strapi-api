@@ -1,7 +1,7 @@
 # Deploy the Strapi API
 
 # Requirement 
-1.AWS account with ec2 t2.micro/t3.micro - (Ubuntu)
+1.AWS account with ec2 t2.small - (Ubuntu)
 
 2.Github account
 
