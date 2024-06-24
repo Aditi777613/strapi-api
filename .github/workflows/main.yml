@@ -24,8 +24,4 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/ubuntu/strapi
-            git pull origin main
-            yarn install
-            yarn build
+   
