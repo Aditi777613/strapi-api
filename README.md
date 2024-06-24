@@ -29,7 +29,7 @@ $ npx create-strapi-app strapi --quickstart
 
 $ cd strapi
 
-Add 443 as a port in inbound rule
+Add 1337 as a port in inbound rule
 
 
 ## Start the Strapi server
