@@ -1,27 +1,43 @@
-name: Deploy Strapi
-'on':
+name: Deploy Strapi API on EC2
+
+on:
   push:
     branches:
       - main
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 18.19.1
+          node-version: '14'  # Adjust Node.js version as needed
+
       - name: Install dependencies
         run: npm install
+
       - name: Build Strapi
-        run: yarn build
-      
+        run: yarn build  # Adjust build command based on your Strapi setup
+
+      - name: Prepare SSH Key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
+          chmod 600 key.pem  # Secure permissions for SSH key
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-   
+          username: ubuntu  # Replace with your EC2 instance username
+          key: ./key.pem  # Use the SSH private key file
+          script: |
+            cd /path/to/strapi/directory  # Adjust path as per your setup
+            git pull origin main  # Pull latest changes from your repository
+            npm install --production  # Install production dependencies
+            npm run build  # Build your Strapi application
+            pm2 restart ecosystem.config.js --env production  # Restart Strapi using PM2
