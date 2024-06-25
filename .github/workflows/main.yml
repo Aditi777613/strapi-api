@@ -36,8 +36,6 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /path/to/strapi/directory  # Adjust path as per your setup
-            git pull origin main  # Pull latest changes from your repository
-            npm install --production  # Install production dependencies
-            npm run build  # Build your Strapi application
-            pm2 restart ecosystem.config.js --env production  # Restart Strapi using PM2
+            cd /home/ubuntu/strapi-project
+            npm install
+            npm run develop
