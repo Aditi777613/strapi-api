@@ -16,25 +16,25 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20.x'  # Update Node.js version to 20.x or another compatible version
+          node-version: '20.x'  
 
       - name: Install dependencies
         run: npm install
 
       - name: Build Strapi
-        run: yarn build  # Adjust build command based on your Strapi setup
+        run: yarn build  
 
       - name: Prepare SSH Key
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
-          chmod 600 key.pem  # Secure permissions for SSH key
+          chmod 600 key.pem  
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu  # Replace with your EC2 instance username
-          key: ./key.pem  # Use the SSH private key file
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /path/to/strapi/directory  # Adjust path as per your setup
             git pull origin main  # Pull latest changes from your repository
