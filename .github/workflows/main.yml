@@ -45,7 +45,7 @@ jobs:
             cd /home/ubuntu/my-strapi-project
 
             # Transfer the build artifacts from the GitHub Actions environment
-            scp -o "StrictHostKeyChecking=no" -r $GITHUB_WORKSPACE/* ubuntu@${EC2_HOST}:/home/ubuntu/my-strapi-project
+            scp -o "StrictHostKeyChecking=no" -r $GITHUB_WORKSPACE/* ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/my-strapi-project
 
             # Install dependencies and build the application
             npm install
@@ -54,4 +54,7 @@ jobs:
             # Start the application using PM2
             sudo npm install -g pm2
             pm2 startup ubuntu
-            pm2 startOrRestart my-strapi-project
+            pm2 start ecosystem.config.js --env production  # Assuming you have an ecosystem.config.js file for PM2
+
+            # Save the PM2 process list and startup script
+            pm2 save
