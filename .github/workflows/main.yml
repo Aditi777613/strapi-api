@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Build Strapi
-        run: yarn build  
+        run: npm run build  
 
       - name: Prepare SSH Key
         run: |
@@ -36,10 +36,22 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # Install Node.js and npm on the EC2 instance
+            sudo apt-get update
+            sudo apt-get install -y nodejs npm
+
+            # Create a directory for the application
+            mkdir -p /home/ubuntu/my-strapi-project
             cd /home/ubuntu/my-strapi-project
-            git pull origin main
+
+            # Transfer the build artifacts from the GitHub Actions environment
+            scp -o "StrictHostKeyChecking=no" -r $GITHUB_WORKSPACE/* ubuntu@${EC2_HOST}:/home/ubuntu/my-strapi-project
+
+            # Install dependencies and build the application
             npm install
             npm run build
-            npm run start  # Start the Strapi API
-            pm2 startup ubuntu  # Start PM2 as a service
-            pm2 startOrRestart my-strapi-project  # Start or restart the Strapi API with PM2
+
+            # Start the application using PM2
+            sudo npm install -g pm2
+            pm2 startup ubuntu
+            pm2 startOrRestart my-strapi-project
