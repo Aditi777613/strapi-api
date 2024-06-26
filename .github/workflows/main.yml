@@ -40,3 +40,6 @@ jobs:
             git pull origin main
             npm install
             npm run build
+            npm run start  # Start the Strapi API
+            pm2 startup ubuntu  # Start PM2 as a service
+            pm2 startOrRestart my-strapi-project  # Start or restart the Strapi API with PM2
