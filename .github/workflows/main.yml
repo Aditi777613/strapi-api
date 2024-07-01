@@ -27,7 +27,7 @@ jobs:
       - name: Prepare SSH Key
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
-          chmod 600 key.pem  
+          chmod 600 key.pem
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -36,16 +36,20 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Install Node.js and npm on the EC2 instance
+            # Install git, Node.js, and npm on the EC2 instance
             sudo apt-get update
-            sudo apt-get install -y nodejs npm
+            sudo apt-get install -y git nodejs npm
 
-            # Create a directory for the application
+            # Create a directory for the application if it doesn't exist
             mkdir -p /home/ubuntu/my-strapi-project
             cd /home/ubuntu/my-strapi-project
 
-            # Transfer the build artifacts from the GitHub Actions environment
-            scp -o "StrictHostKeyChecking=no" -r $GITHUB_WORKSPACE/* ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/my-strapi-project
+            # Clone the repository if it doesn't exist, otherwise pull the latest changes
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/your-username/your-repo.git .
+            else
+              git pull origin main
+            fi
 
             # Install dependencies and build the application
             npm install
@@ -58,3 +62,4 @@ jobs:
 
             # Save the PM2 process list and startup script
             pm2 save
+
